@@ -1,7 +1,25 @@
-.vs/VirtualPlanet/v14/.suo
-VirtualPlanet.sdf
-VirtualPlanet.opensdf
-VirtualPlanet.vcxproj.filters
-VirtualPlanet.vcxproj
-VirtualPlanet.sln
-VirtualPlanet.vcxproj.user
+# ----[ Visual Studio ]------- #
+/kbe/src/_objs
+/kbe/src/ipch
+__pycache__/
+logs/
+*.suo
+*.user
+*.ncb
+*.plg
+*.opt
+*.aps
+*.aps
+*.sdf
+*.opensdf
+*.exp
+*.idb
+*.ilk
+*.exe
+*.pdb
+
+# -------------[ OS generated ]------------------------ #
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Thumbs.db
