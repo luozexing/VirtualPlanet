@@ -23,3 +23,10 @@ logs/
 .DS_Store?
 ehthumbs.db
 Thumbs.db
+.idea/.name
+.idea/misc.xml
+.idea/workspace.xml
+.idea/modules.xml
+.idea/encodings.xml
+.idea/VirtualPlanet.iml
+.idea/vcs.xml
