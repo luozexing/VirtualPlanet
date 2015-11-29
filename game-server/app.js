@@ -20,12 +20,6 @@ app.configure('production|development', 'connector', function(){
       });
 });
 
-// app configure
-app.configure('production|development', function() {
-    // route configures
-    app.route('area', app.getServersByType('area'));
-});
-
 // start app
 app.start();
 
