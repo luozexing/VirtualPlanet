@@ -15,12 +15,12 @@ var AreaRemote = function(app) {
  */
 
 AreaRemote.prototype.map = function(session, username, sid,cb) {
-    var channelService = this.channelService;
+    /*var channelService = this.channelService;
     channelService.pushMessageByUids("onMap","pushed message",uid,{},function(){
         console.log("Message is pushed.");
     });
     if( !! channelService) {
         channelService.add(uid, sid);
-    }
+    }*/
     cb("test success");
 };
