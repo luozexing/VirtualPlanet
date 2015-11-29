@@ -32,7 +32,7 @@
                     username: username,
                     coordinate: coordinate
                 }, function(data) {
-                    alert(data.msg);
+                    document.getElementById("result-info").innerHTML = data.infomation;
                 });
             });
 
