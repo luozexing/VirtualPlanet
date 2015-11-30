@@ -32,10 +32,10 @@
                     username: username,
                     coordinate: coordinate
                 }, function(data) {
-                    document.getElementById("result-info").innerHTML = data.infomation;
+                    document.getElementById("result-info").innerHTML = data.information;
+                    return false;
                 });
             });
-
             return false;
         }
     </script>
@@ -73,7 +73,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button class="btn btn-default" id="lookup-button" onclick="lookup()">查询</button>
+                        <button class="btn btn-default" id="lookup-button" onclick="lookup();return false;">查询</button>
                     </div>
                 </div>
             </form>
