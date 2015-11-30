@@ -25,9 +25,6 @@ Handler.prototype.entry = function(msg, session, next) {
         session.bind(username);
     }
 
-    //put coordinate info into channel
-    self.app.rpc.area.areaRemote.map(session, username, self.app.get("serverId"), function(information){
-        next(null, {information: information});
-    });
+    next(null, {information: "正在查询中，请稍后..."});
     console.log("connector.entry ends");
 };
