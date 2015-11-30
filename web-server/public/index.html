@@ -29,11 +29,13 @@
                 log: true
             }, function() {
                 pomelo.request("connector.entryHandler.entry", {
-                    username: username,
-                    coordinate: coordinate
-                }, function(data) {
-                    document.getElementById("result-info").innerHTML = data.information;
-                    return false;
+                    username: username
+                }, function() {
+                    var route = "area.areaHandler.map";
+                    pomelo.request(route,{coordinate: coordinate},function(data){
+                        document.getElementById("result-info").innerHTML = data.coordinate+data.result;
+                        return false;
+                    });
                 });
             });
             return false;
