@@ -18,13 +18,12 @@ Handler.prototype.entry = function(msg, session, next) {
     console.log("connector.entry begins");
     var self = this;
     var username = msg.username;
-    var coordinate = msg.coordinate;
     var sessionService = self.app.get("sessionService");
 
     if (!sessionService.getByUid(username)) {
         session.bind(username);
     }
 
-    next(null, {information: "正在查询中，请稍后..."});
+    next(null);
     console.log("connector.entry ends");
 };
