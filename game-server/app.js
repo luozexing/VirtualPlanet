@@ -21,10 +21,11 @@ app.configure('production|development', 'connector', function(){
 });
 
 // app configure
-app.configure('production|development', function() {
+/*app.configure('production|development', function() {
     // route configures
+    console.log(app.getServersByType('area'));
     app.route('area', app.getServersByType('area'));
-});
+});*/
 
 // start app
 app.start();

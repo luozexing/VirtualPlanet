@@ -14,7 +14,7 @@ var AreaRemote = function(app) {
  * get map information.
  */
 
-AreaRemote.prototype.map = function(session, username, sid,cb) {
+AreaRemote.prototype.map = function(username, sid, flag, cb) {
     /*var channelService = this.channelService;
     channelService.pushMessageByUids("onMap","pushed message",uid,{},function(){
         console.log("Message is pushed.");
