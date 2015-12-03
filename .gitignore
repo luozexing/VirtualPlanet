@@ -40,3 +40,5 @@ android-client/gradlew
 android-client/gradlew.bat
 android-client/local.properties
 android-client/settings.gradle
+android-client/app/build.gradle
+android-client/app/build.gradle
