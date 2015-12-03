@@ -26,6 +26,8 @@ import io.socket.SocketIOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    PomeloClient pomeloClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PomeloClient pomeloClient = new PomeloClient("192.168.1.101",6050);
+                pomeloClient = new PomeloClient("192.168.0.68",3010);
                 pomeloClient.init();
 
                 String route = "area.areaHandler.map";
@@ -53,9 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 pomeloClient.request(route, msg, new DataCallBack() {
                     @Override
                     public void responseData(JSONObject jsonObject) {
+                        pomeloClient.disconnect();
                         Log.d(getClass().getSimpleName(),"------------------");//jsonObject.toString()
                         TextView tv = (TextView)findViewById(R.id.content);
-                        tv.setText("hahaha");
+                        tv.setText("hahaha111");
                     }
                 });
 //==================================SocketIO-java==============================
