@@ -34,7 +34,7 @@ android-client/.idea
 android-client/gradle
 android-client/build
 android-client/android-client.iml
-#android-client/build.gradle
+android-client/build.gradle
 android-client/gradle.properties
 android-client/gradlew
 android-client/gradlew.bat
