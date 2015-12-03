@@ -13,20 +13,19 @@ import android.widget.TextView;
 
 import com.netease.pomelo.DataCallBack;
 import com.netease.pomelo.PomeloClient;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import io.socket.IOAcknowledge;
-import io.socket.IOCallback;
-import io.socket.SocketIO;
-import io.socket.SocketIOException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
     PomeloClient pomeloClient;
+    String gateRoute = "gate.gateHandler.queryEntry";
+    String connectorRoute = "connector.entryHandler.entry";
+    String areaRoute = "area.areaHandler.map";
+    String gateHost = "192.168.1.101";
+    int gatePort = 2015;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,74 +38,99 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pomeloClient = new PomeloClient("192.168.0.68",3010);
-                pomeloClient.init();
 
-                String route = "area.areaHandler.map";
-                //String route = "connector.entryHandler.entry";
+                queryArea("uid","test",new HashMap<String, String>());
 
-                JSONObject msg = new JSONObject();
-                try {
-                    //msg.put("username","TestUser");
-                    msg.put("coordinate", 1234);
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                pomeloClient.request(route, msg, new DataCallBack() {
-                    @Override
-                    public void responseData(JSONObject jsonObject) {
-                        pomeloClient.disconnect();
-                        Log.d(getClass().getSimpleName(),"------------------");//jsonObject.toString()
-                        TextView tv = (TextView)findViewById(R.id.content);
-                        tv.setText("hahaha111");
-                    }
-                });
-//==================================SocketIO-java==============================
-                /*SocketIO socket = null;
-                try {
-                    socket = new SocketIO("http://127.0.0.1:6050/");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                socket.connect(new IOCallback() {
-                    @Override
-                    public void onDisconnect() {
-
-                    }
-
-                    @Override
-                    public void onConnect() {
-                        System.out.println("=======================");
-                    }
-
-                    @Override
-                    public void onMessage(String s, IOAcknowledge ioAcknowledge) {
-
-                    }
-
-                    @Override
-                    public void onMessage(JSONObject jsonObject, IOAcknowledge ioAcknowledge) {
-                        try {
-                            System.out.println("Server said:" + jsonObject.toString(2));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void on(String s, IOAcknowledge ioAcknowledge, Object... objects) {
-
-                    }
-
-                    @Override
-                    public void onError(SocketIOException e) {
-
-                    }
-                });*/
-
-               Snackbar.make(view,"test1", Snackbar.LENGTH_LONG)
+                Snackbar.make(view,"test done!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+    }
+
+    public void queryConnector(String uid,String name, final HashMap<String,String> hp){
+        pomeloClient = new PomeloClient(gateHost,gatePort);
+        pomeloClient.init();
+
+        JSONObject gateMsg = new JSONObject();
+        try {
+            gateMsg.put(uid, name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+            pomeloClient.request(gateRoute, gateMsg, new DataCallBack() {
+                @Override
+                public void responseData(JSONObject res) {
+                    pomeloClient.disconnect();
+                    try {
+                        connectorEnter(res.getString("host"),res.getInt("port"),hp);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
+    public void queryArea(String uid,String name, final HashMap<String,String> hp){
+        pomeloClient = new PomeloClient(gateHost,gatePort);
+        pomeloClient.init();
+
+        JSONObject gateMsg = new JSONObject();
+        try {
+            gateMsg.put(uid, name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pomeloClient.request(gateRoute, gateMsg, new DataCallBack() {
+            @Override
+            public void responseData(JSONObject res) {
+                pomeloClient.disconnect();
+                try {
+                    areaEnter(res.getString("host"),res.getInt("port"),hp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void connectorEnter(String host, int port, HashMap<String,String> hp){
+        JSONObject msg = new JSONObject();
+        Iterator iterator = hp.keySet().iterator();
+        try {
+            while (iterator.hasNext())
+            msg.put(iterator.next().toString(),hp.get(iterator.next()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pomeloClient.request(connectorRoute, msg, new DataCallBack() {
+            @Override
+            public void responseData(JSONObject jsonObject) {
+                pomeloClient.disconnect();
+                //do something...
+            }
+        });
+    }
+
+    public void areaEnter(String host, int port, HashMap<String,String> hp){
+        JSONObject msg = new JSONObject();
+        Iterator iterator = hp.keySet().iterator();
+        try {
+            while (iterator.hasNext())
+                msg.put(iterator.next().toString(),hp.get(iterator.next()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pomeloClient.request(connectorRoute, msg, new DataCallBack() {
+            @Override
+            public void responseData(JSONObject jsonObject) {
+                pomeloClient.disconnect();
+                //do something...
+                TextView tv = (TextView)findViewById(R.id.content);
+                try {
+                    tv.setText(jsonObject.getString("result"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
