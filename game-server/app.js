@@ -1,4 +1,5 @@
 var pomelo = require('pomelo');
+var routeUtil = require("./app/utils/routeUtil.js");
 
 /**
  * Init app for client.
@@ -7,12 +8,21 @@ var app = pomelo.createApp();
 app.set('name', 'VirtualPlanet');
 
 // app configuration
+app.configure('production|development', 'gate', function(){
+    app.set('connectorConfig',
+        {
+            connector : pomelo.connectors.hybridconnector,
+            useProtobuf : true
+        });
+});
+
+// app configuration
 app.configure('production|development', 'connector', function(){
   app.set('connectorConfig',
       {
         connector : pomelo.connectors.sioconnector,
         //websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
-        transports : ['websocket'],
+        //transports : ['websocket'],
         heartbeats : true,
         closeTimeout : 60,
         heartbeatTimeout : 60,
@@ -21,11 +31,10 @@ app.configure('production|development', 'connector', function(){
 });
 
 // app configure
-/*app.configure('production|development', function() {
+app.configure('production|development', function() {
     // route configures
-    console.log(app.getServersByType('area'));
-    app.route('area', app.getServersByType('area'));
-});*/
+    app.route('area', routeUtil.area);
+});
 
 // start app
 app.start();

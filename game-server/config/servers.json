@@ -1,18 +1,34 @@
 {
-  "development":{
-    "connector": [
-      {"id": "connector-server-1", "host": "127.0.0.1", "port": 3150, "clientHost": "127.0.0.1", "clientPort": 3010, "frontend": true}
-    ],
-    "area":[
-      {"id": "area-server-1", "host":"127.0.0.1", "port":6050}
-    ]
-  },
-  "production":{
-    "connector": [
-      {"id": "connector-server-1", "host": "127.0.0.1", "port": 3150, "clientHost": "127.0.0.1", "clientPort": 3010, "frontend": true}
-    ],
-    "area":[
-      {"id": "area-server-1", "host":"127.0.0.1", "port":6050}
-    ]
-  }
+    "development":{
+        "gate": [
+            {"id": "gate-server-1", "host": "127.0.0.1", "clientPort": 2015, "frontend": true}
+        ],
+        "connector": [
+            {"id": "connector-server-1", "host": "127.0.0.1", "port": 3150, "clientHost": "127.0.0.1", "clientPort": 3010, "frontend": true},
+            {"id": "connector-server-2", "host": "127.0.0.1", "port": 3151, "clientHost": "127.0.0.1", "clientPort": 3011, "frontend": true},
+            {"id": "connector-server-3", "host": "127.0.0.1", "port": 3152, "clientHost": "127.0.0.1", "clientPort": 3012, "frontend": true}
+        ],
+        "area":[
+            {"id": "area-server-chaoyang", "host":"127.0.0.1", "port":6050},
+            {"id": "area-server-haidian", "host":"127.0.0.1", "port":6051},
+            {"id": "area-server-dongcheng", "host":"127.0.0.1", "port":6052},
+            {"id": "area-server-xicheng", "host":"127.0.0.1", "port":6053}
+        ]
+    },
+    "production":{
+        "gate": [
+            {"id": "gate-server-1", "host": "127.0.0.1", "clientPort": 2015, "frontend": true}
+        ],
+        "connector": [
+            {"id": "connector-server-1", "host": "127.0.0.1", "port": 3150, "clientHost": "127.0.0.1", "clientPort": 3010, "frontend": true},
+            {"id": "connector-server-2", "host": "127.0.0.1", "port": 3151, "clientHost": "127.0.0.1", "clientPort": 3011, "frontend": true},
+            {"id": "connector-server-3", "host": "127.0.0.1", "port": 3152, "clientHost": "127.0.0.1", "clientPort": 3012, "frontend": true}
+        ],
+        "area":[
+            {"id": "area-server-chaoyang", "host":"127.0.0.1", "port":6050},
+            {"id": "area-server-haidian", "host":"127.0.0.1", "port":6051},
+            {"id": "area-server-dongcheng", "host":"127.0.0.1", "port":6052},
+            {"id": "area-server-xicheng", "host":"127.0.0.1", "port":6053}
+        ]
+    }
 }
