@@ -15,17 +15,17 @@ import com.netease.pomelo.DataCallBack;
 import com.netease.pomelo.PomeloClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
-    PomeloClient pomeloClient;
-    String gateRoute = "gate.gateHandler.queryEntry";
-    String connectorRoute = "connector.entryHandler.entry";
-    String areaRoute = "area.areaHandler.map";
-    String gateHost = "192.168.1.101";
-    int gatePort = 2015;
+    private String gateRoute = "gate.gateHandler.queryEntry";
+    private String connectorRoute = "connector.entryHandler.entry";
+    private String areaRoute = "area.areaHandler.map";
+    private String gateHost = "192.168.1.101";
+    private int gatePort = 2015;
+
+    private String TAG = this.getClass().getSimpleName();
+    public PomeloClient pomeloClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Log.d(TAG, "onCreate: done.");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                queryArea("uid","test",new HashMap<String, String>());
+                Log.d(TAG, "onClick: clicked.");
+                JSONObject reqMsg = new JSONObject();
+                try {
+                    reqMsg.put("coordinate","1234");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                queryArea("uid","test",reqMsg);
+                //areaEnter(gateHost,3010,reqMsg);
 
                 Snackbar.make(view,"test done!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -47,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void queryConnector(String uid,String name, final HashMap<String,String> hp){
+    private void queryConnector(String uid,String name, final JSONObject reqMsg){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 public void responseData(JSONObject res) {
                     pomeloClient.disconnect();
                     try {
-                        connectorEnter(res.getString("host"),res.getInt("port"),hp);
+                        connectorEnter(res.getString("host"),res.getInt("port"),reqMsg);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -70,13 +79,14 @@ public class MainActivity extends AppCompatActivity {
             });
     }
 
-    public void queryArea(String uid,String name, final HashMap<String,String> hp){
+    private void queryArea(String uid,String name, final JSONObject reqMsg){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
         JSONObject gateMsg = new JSONObject();
         try {
             gateMsg.put(uid, name);
+            Log.d(TAG, "queryArea: put uid into gateMsg");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -84,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void responseData(JSONObject res) {
                 pomeloClient.disconnect();
+                Log.d(TAG, "responseData: try to call areaEnter");
                 try {
-                    areaEnter(res.getString("host"),res.getInt("port"),hp);
+                    areaEnter(res.getString("host"),res.getInt("port"),reqMsg);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -93,16 +104,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void connectorEnter(String host, int port, HashMap<String,String> hp){
-        JSONObject msg = new JSONObject();
-        Iterator iterator = hp.keySet().iterator();
-        try {
-            while (iterator.hasNext())
-            msg.put(iterator.next().toString(),hp.get(iterator.next()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        pomeloClient.request(connectorRoute, msg, new DataCallBack() {
+    private void connectorEnter(String host, int port, JSONObject reqMsg){
+        pomeloClient = new PomeloClient(host,port);
+        pomeloClient.init();
+
+        pomeloClient.request(connectorRoute, reqMsg, new DataCallBack() {
             @Override
             public void responseData(JSONObject jsonObject) {
                 pomeloClient.disconnect();
@@ -111,26 +117,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void areaEnter(String host, int port, HashMap<String,String> hp){
-        JSONObject msg = new JSONObject();
-        Iterator iterator = hp.keySet().iterator();
-        try {
-            while (iterator.hasNext())
-                msg.put(iterator.next().toString(),hp.get(iterator.next()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        pomeloClient.request(connectorRoute, msg, new DataCallBack() {
+    private void areaEnter(String host, int port, JSONObject reqMsg){
+        Log.d(TAG, "areaEnter: host="+host+"; port="+port);
+        //if host is 127.0.0.1, it should be replaced as local IP, eg:192.168.1.101
+        pomeloClient = new PomeloClient(host,port);
+        pomeloClient.init();
+
+        Log.d(TAG, "areaEnter: "+reqMsg.toString());
+        pomeloClient.request(areaRoute, reqMsg, new DataCallBack() {
             @Override
             public void responseData(JSONObject jsonObject) {
                 pomeloClient.disconnect();
-                //do something...
+                Log.d(TAG, "responseData: areaServer deal.");
+                String text= null;
+                try {
+                    text = jsonObject.getString("result");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 TextView tv = (TextView)findViewById(R.id.content);
-                try {
-                    tv.setText(jsonObject.getString("result"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                tv.setText(text);
+
             }
         });
     }
