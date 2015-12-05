@@ -19,12 +19,11 @@
     <script type="text/javascript">
         var pomelo = window.pomelo;
 
-        var gateHost = "127.0.0.1";
+        var gateHost = window.location.hostname;
         var gatePort = 2015;
         var gateRoute = "gate.gateHandler.queryEntry";
 
         var username = "TestUser";
-        var coordinate = document.getElementById("coordinate").value;
 
         function lookup() {
             // query connector host and port
@@ -37,7 +36,7 @@
                     uid: username
                 }, function(data) {
                     pomelo.disconnect();
-                    if (data.code == 500) {
+                    if (data.code != 200) {
                         alert("Error");
                         return;
                     }
@@ -49,6 +48,7 @@
                         log: true
                     }, function() {
                         var areaMapRoute = "area.areaHandler.map";
+                        var coordinate = document.getElementById("coordinate").value;
                         pomelo.request(route, {
                             coordinate: coordinate
                         }, function(data){
