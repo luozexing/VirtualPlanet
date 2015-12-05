@@ -8,26 +8,27 @@ var app = pomelo.createApp();
 app.set('name', 'VirtualPlanet');
 
 // app configuration
-app.configure('production|development', 'gate', function(){
+app.configure('production|development', 'connector', function(){
     app.set('connectorConfig',
         {
-            connector : pomelo.connectors.hybridconnector,
+            connector : pomelo.connectors.sioconnector,
+            //websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
+            //transports : ['websocket'],
+            heartbeats : true,
+            closeTimeout : 60,
+            heartbeatTimeout : 60,
+            heartbeatInterval : 25,
             useProtobuf : true
         });
 });
 
 // app configuration
-app.configure('production|development', 'connector', function(){
-  app.set('connectorConfig',
-      {
-        connector : pomelo.connectors.sioconnector,
-        //websocket, htmlfile, xhr-polling, jsonp-polling, flashsocket
-        //transports : ['websocket'],
-        heartbeats : true,
-        closeTimeout : 60,
-        heartbeatTimeout : 60,
-        heartbeatInterval : 25
-      });
+app.configure('production|development', 'gate', function(){
+    app.set('connectorConfig',
+        {
+            connector : pomelo.connectors.sioconnector,
+            useProtobuf : true
+        });
 });
 
 // app configure

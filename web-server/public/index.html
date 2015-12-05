@@ -20,7 +20,7 @@
         var pomelo = window.pomelo;
 
         var gateHost = window.location.hostname;
-        var gatePort = 2015;
+        var gatePort = 3222;
         var gateRoute = "gate.gateHandler.queryEntry";
 
         var username = "TestUser";
@@ -42,17 +42,17 @@
                     }
                     var connectorHost = data.host;
                     var connectorPort = data.port;
-                    pemelo.init({
+                    pomelo.init({
                         host: connectorHost,
                         port: connectorPort,
                         log: true
                     }, function() {
                         var areaMapRoute = "area.areaHandler.map";
                         var coordinate = document.getElementById("coordinate").value;
-                        pomelo.request(route, {
+                        pomelo.request(areaMapRoute, {
                             coordinate: coordinate
                         }, function(data){
-                            document.getElementById("result-info").innerHTML = data.coordinate+data.result;
+                            document.getElementById("result-info").innerHTML = data.coordinate + data.result;
                             return false;
                         });
                     })

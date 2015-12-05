@@ -11,5 +11,5 @@ module.exports.area = function(session, msg, app, next) {
     // choose area server according to the coordinate of this user
     var areaServer = areaServers[0];
 
-    return areaServer;
+    next(null, areaServer.id);
 }
