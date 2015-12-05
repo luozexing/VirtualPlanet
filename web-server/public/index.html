@@ -18,26 +18,47 @@
     </script>
     <script type="text/javascript">
         var pomelo = window.pomelo;
-        var host = "127.0.0.1";
-        var port = "3010";
+
+        var gateHost = "127.0.0.1";
+        var gatePort = 2015;
+        var gateRoute = "gate.gateHandler.queryEntry";
+
+        var username = "TestUser";
+        var coordinate = document.getElementById("coordinate").value;
+
         function lookup() {
-            var username = "TestUser";
-            var coordinate = document.getElementById("coordinate").value;
+            // query connector host and port
             pomelo.init({
-                host: host,
-                port: port,
+                host: gateHost,
+                port: gatePort,
                 log: true
             }, function() {
-                pomelo.request("connector.entryHandler.entry", {
-                    username: username
-                }, function() {
-                    var route = "area.areaHandler.map";
-                    pomelo.request(route,{coordinate: coordinate},function(data){
-                        document.getElementById("result-info").innerHTML = data.coordinate+data.result;
-                        return false;
-                    });
+                pomelo.request(gateRoute, {
+                    uid: username
+                }, function(data) {
+                    pomelo.disconnect();
+                    if (data.code == 500) {
+                        alert("Error");
+                        return;
+                    }
+                    var connectorHost = data.host;
+                    var connectorPort = data.port;
+                    pemelo.init({
+                        host: connectorHost,
+                        port: connectorPort,
+                        log: true
+                    }, function() {
+                        var areaMapRoute = "area.areaHandler.map";
+                        pomelo.request(route, {
+                            coordinate: coordinate
+                        }, function(data){
+                            document.getElementById("result-info").innerHTML = data.coordinate+data.result;
+                            return false;
+                        });
+                    })
                 });
             });
+
             return false;
         }
     </script>
