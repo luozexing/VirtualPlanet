@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.MapView;
 import com.netease.pomelo.DataCallBack;
 import com.netease.pomelo.PomeloClient;
 import org.json.JSONException;
@@ -22,15 +24,23 @@ public class MainActivity extends AppCompatActivity {
     private String connectorRoute = "connector.entryHandler.entry";
     private String areaRoute = "area.areaHandler.map";
     private String gateHost = "192.168.1.101";
-    private int gatePort = 2015;
+    private int gatePort = 3222;
 
     private String TAG = this.getClass().getSimpleName();
     public PomeloClient pomeloClient;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        MapView mMapView = null;
+
         super.onCreate(savedInstanceState);
+        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        mMapView = (MapView) findViewById(R.id.bmapView);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -120,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     private void areaEnter(String host, int port, JSONObject reqMsg){
         Log.d(TAG, "areaEnter: host="+host+"; port="+port);
         //if host is 127.0.0.1, it should be replaced as local IP, eg:192.168.1.101
-        pomeloClient = new PomeloClient(host,port);
+        pomeloClient = new PomeloClient("192.168.1.101",port);
         pomeloClient.init();
 
         Log.d(TAG, "areaEnter: "+reqMsg.toString());
