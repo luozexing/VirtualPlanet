@@ -12,11 +12,18 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.TextureMapView;
 import com.netease.pomelo.DataCallBack;
 import com.netease.pomelo.PomeloClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.location.BDNotifyListener;//假如用到位置提醒功能，需要import该类
+import com.baidu.location.Poi;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,17 +36,21 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
     public PomeloClient pomeloClient;
 
+    public LocationClient mLocationClient = null;
+    public BDLocationListener myListener = new MyLocationListener();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        MapView mMapView = null;
+        TextureMapView mMapView = null;
+        mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
+        mLocationClient.registerLocationListener( myListener );    //注册监听函数
 
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        mMapView = (MapView) findViewById(R.id.bmapView);
+        mMapView = (TextureMapView) findViewById(R.id.bmapView);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 queryArea("uid","test",reqMsg);
                 //areaEnter(gateHost,3010,reqMsg);
 
-                Snackbar.make(view,"test done!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view,"test done!", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
     }

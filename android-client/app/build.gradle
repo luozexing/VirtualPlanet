@@ -31,11 +31,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile files('libs/pomelo-android-client.jar')
-    compile files('libs/baidumapapi_base_v3_6_1.jar')
-    compile files('libs/baidumapapi_cloud_v3_6_1.jar')
-    compile files('libs/baidumapapi_map_v3_6_1.jar')
-    compile files('libs/baidumapapi_radar_v3_6_1.jar')
-    compile files('libs/baidumapapi_search_v3_6_1.jar')
-    compile files('libs/baidumapapi_util_v3_6_1.jar')
+    compile files('libs/BaiduLBS_Android.jar')
     compile files('libs/locSDK_6.13.jar')
 }
