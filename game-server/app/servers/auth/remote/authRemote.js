@@ -12,18 +12,23 @@ authRemote.signup = function() {
 
 }
 
-authRemote.signin = function(username, password) {
+authRemote.signin = function(username, password, success, fail) {
     var userEntity = new UserModel("localhost", "VirtualPlanet", "User", userSchema);
 
     userEntity.findOne({"username": username, "password": password}, "some select", function(err, user){
+        console.log("user when sign in: " + user);
         if (user) {
+            console.log("sign in successfully");
             user.last_signin_time = Date.parse(new Date());
             user.save();
-            return true;
+            success();
         } else {
-            return false;
+            console.log("sign in fails");
+            fail();
         }
     })
+
+    return;
 }
 
 authRemote.signout = function(session, uid) {
@@ -36,8 +41,8 @@ var userSchema = new mongoose.Schema({
     username: String,
     password: String,
     name: String,
-    create_time: Timestamp,
-    last_signin_time: Timestamp
+    create_time: Number,
+    last_signin_time: Number
 })
 
 var UserModel = function(host, dbName, modelName, schema) {

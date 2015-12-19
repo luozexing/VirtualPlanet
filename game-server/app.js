@@ -31,6 +31,15 @@ app.configure('production|development', 'gate', function(){
         });
 });
 
+// app configuration
+app.configure('production|development', 'auth', function(){
+    app.set('connectorConfig',
+        {
+            connector : pomelo.connectors.sioconnector,
+            useProtobuf : true
+        });
+});
+
 // app configure
 app.configure('production|development', function() {
     // route configures

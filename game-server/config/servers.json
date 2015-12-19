@@ -11,6 +11,9 @@
             {"id": "area-server-dongcheng", "host":"127.0.0.1", "port":6052},
             {"id": "area-server-xicheng", "host":"127.0.0.1", "port":6053}
         ],
+        "auth": [
+            {"id": "auth-server-1", "host": "127.0.0.1", "port": 4050}
+        ],
         "gate": [
             {"id": "gate-server-1", "host": "127.0.0.1", "clientPort": 3222, "frontend": true}
         ]
@@ -26,6 +29,9 @@
             {"id": "area-server-haidian", "host":"127.0.0.1", "port":6051},
             {"id": "area-server-dongcheng", "host":"127.0.0.1", "port":6052},
             {"id": "area-server-xicheng", "host":"127.0.0.1", "port":6053}
+        ],
+        "auth": [
+            {"id": "auth-server-1", "host": "127.0.0.1", "port": 4050}
         ],
         "gate": [
             {"id": "gate-server-1", "host": "127.0.0.1", "clientPort": 3222, "frontend": true}
