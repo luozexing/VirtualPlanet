@@ -80,7 +80,7 @@ public class Message {
     }
 
     private static JSONObject connectorEnter(String host, int port, JSONObject reqMsg){
-        final ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+        final JSONObject[] list = new JSONObject[1];
         final JSONObject result;
         pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
@@ -89,15 +89,15 @@ public class Message {
             @Override
             public void responseData(JSONObject jsonObject) {
                 pomeloClient.disconnect();
-                list.add(jsonObject);
+                list[0] = jsonObject;
             }
         });
-        return list.get(0);
+        return list[0];
     }
 
     private static JSONObject areaEnter(String host, int port, JSONObject reqMsg){
-        final ArrayList<JSONObject> list = new ArrayList<JSONObject>();
-        pomeloClient = new PomeloClient(host,port);
+        final JSONObject[] list = new JSONObject[1];
+        pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
 
         Log.d(TAG, "areaEnter: "+reqMsg.toString());
@@ -105,9 +105,9 @@ public class Message {
             @Override
             public void responseData(JSONObject jsonObject) {
                 pomeloClient.disconnect();
-                list.add(jsonObject);
+                list[0] = jsonObject;
             }
         });
-        return list.get(0);
+        return list[0];
     }
 }
