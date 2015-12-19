@@ -17,7 +17,7 @@ var PersonSchema = new mongoose.Schema({
 var PersonModel = db.model('Person',PersonSchema);
 var personEntity = new PersonModel({name:'Krouky'});
 console.log(personEntity.name);
-//personEntity.save();
+personEntity.save();
 
 PersonModel.find(function(err,persons){
    console.log(persons);
