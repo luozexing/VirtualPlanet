@@ -12,8 +12,8 @@ var handler = Handler.prototype;
 
 handler.queryEntry = function(msg, session, next) {
     // get uid (username)
-    var uid = msg.uid;
-    if (!uid) {
+    var username = msg.username;
+    if (!username) {
         next(null,{
             code: 500
         });
@@ -30,7 +30,7 @@ handler.queryEntry = function(msg, session, next) {
     }
 
     // choose connector
-    var connector = dispatcher.dispatch(uid, connectors);
+    var connector = dispatcher.dispatch(username, connectors);
     next(null, {
         code: 200,
         host: connector.host,
