@@ -12,19 +12,23 @@ authRemote.signup = function() {
 
 }
 
-authRemote.signin = function(username, password) {
+authRemote.signin = function(username, password, success, fail) {
     var userEntity = new UserModel("localhost", "VirtualPlanet", "User", userSchema);
 
     userEntity.findOne({"username": username, "password": password}, "some select", function(err, user){
-        console.log("user when login: " + user);
+        console.log("user when sign in: " + user);
         if (user) {
+            console.log("sign in successfully");
             user.last_signin_time = Date.parse(new Date());
             user.save();
-            return true;
+            success();
         } else {
-            return false;
+            console.log("sign in fails");
+            fail();
         }
     })
+
+    return;
 }
 
 authRemote.signout = function(session, uid) {

@@ -31,8 +31,7 @@ Handler.prototype.entry = function(msg, session, next) {
         return;
     }
 
-    var signinResult = self.app.rpc.auth.authRemote.signin(username, password);
-    if (signinResult) {
+    self.app.rpc.auth.authRemote.signin(session, username, password, function(){
         session.bind(username);
         session.on('closed', onUserLeave(null, self.app));
         next(null, {
@@ -40,13 +39,13 @@ Handler.prototype.entry = function(msg, session, next) {
             error: false,
             message: "sign in successfully"
         });
-    } else {
+    }, function() {
         next(null, {
             code: 500,
             error: true,
             message: "username or password incorrect"
         });
-    }
+    });
 
     console.log("connector.entry ends");
 };
@@ -57,7 +56,7 @@ Handler.prototype.signup = function(msg, session, next) {
     var password = msg.password;
     var name = msg.name;
 
-    if (self.app.rpc.auth.authRemote.checkDuplicates(username)) {
+    if (self.app.rpc.auth.authRemote.checkDuplicates(session, username)) {
         next(null, {
             code: 500,
             error: true,
@@ -66,7 +65,7 @@ Handler.prototype.signup = function(msg, session, next) {
         return;
     }
 
-    if (self.app.rpc.auth.authRemote.signup(username, password, name)) {
+    if (self.app.rpc.auth.authRemote.signup(session, username, password, name)) {
         next(null, {
             code: 200,
             error: false,
@@ -93,6 +92,7 @@ Handler.prototype.exit = function(msg, session, next) {
 }
 
 var onUserLeave = function(app, session) {
+    console.log("on user leave");
     if (!session || !session.uid) {
         return;
     }
