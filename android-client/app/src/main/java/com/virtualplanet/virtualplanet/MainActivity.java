@@ -1,166 +1,57 @@
 package com.virtualplanet.virtualplanet;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.TextureMapView;
-import com.netease.pomelo.DataCallBack;
-import com.netease.pomelo.PomeloClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.location.BDNotifyListener;//假如用到位置提醒功能，需要import该类
-import com.baidu.location.Poi;
-
 public class MainActivity extends AppCompatActivity {
 
-    private String gateRoute = "gate.gateHandler.queryEntry";
-    private String connectorRoute = "connector.entryHandler.entry";
-    private String areaRoute = "area.areaHandler.map";
-    private String gateHost = "192.168.1.101";
-    private int gatePort = 3222;
-
     private String TAG = this.getClass().getSimpleName();
-    public PomeloClient pomeloClient;
 
-    public LocationClient mLocationClient = null;
-    public BDLocationListener myListener = new MyLocationListener();
-
+    private LoginFragment loginFragment;
+    private ContentFragment contentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        TextureMapView mMapView = null;
-        mLocationClient = new LocationClient(getApplicationContext());     //声明LocationClient类
-        mLocationClient.registerLocationListener( myListener );    //注册监听函数
-
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        mMapView = (TextureMapView) findViewById(R.id.bmapView);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        Log.d(TAG, "onCreate: done.");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Log.d(TAG, "onClick: clicked.");
-                JSONObject reqMsg = new JSONObject();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        final SharedPreferences auth = getSharedPreferences("auth",0);
+        Boolean autoLogin = auth.getBoolean("autoLogin",false);
+        if(autoLogin){
+            String username = auth.getString("username",null);
+            String passwd = auth.getString("passwd",null);
+            if(username != null && passwd != null){
+                JSONObject gateMsg = new JSONObject();
                 try {
-                    reqMsg.put("coordinate","1234");
+                    gateMsg.put(username, passwd);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                queryArea("uid","test",reqMsg);
-                //areaEnter(gateHost,3010,reqMsg);
-
-                /*Snackbar.make(view,"test done!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
+                JSONObject result = Message.queryConnector("uid","name",gateMsg);
             }
-        });
-    }
 
-    private void queryConnector(String uid,String name, final JSONObject reqMsg){
-        pomeloClient = new PomeloClient(gateHost,gatePort);
-        pomeloClient.init();
-
-        JSONObject gateMsg = new JSONObject();
-        try {
-            gateMsg.put(uid, name);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            contentFragment = new ContentFragment();
+            transaction.replace(R.id.fragment_layout, contentFragment);
+            transaction.commit();
+        }else{
+            loginFragment = new LoginFragment();
+            transaction.replace(R.id.fragment_layout, loginFragment);
+            transaction.commit();
         }
-            pomeloClient.request(gateRoute, gateMsg, new DataCallBack() {
-                @Override
-                public void responseData(JSONObject res) {
-                    pomeloClient.disconnect();
-                    try {
-                        connectorEnter(res.getString("host"),res.getInt("port"),reqMsg);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-    }
-
-    private void queryArea(String uid,String name, final JSONObject reqMsg){
-        pomeloClient = new PomeloClient(gateHost,gatePort);
-        pomeloClient.init();
-
-        JSONObject gateMsg = new JSONObject();
-        try {
-            gateMsg.put(uid, name);
-            Log.d(TAG, "queryArea: put uid into gateMsg");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        pomeloClient.request(gateRoute, gateMsg, new DataCallBack() {
-            @Override
-            public void responseData(JSONObject res) {
-                pomeloClient.disconnect();
-                Log.d(TAG, "responseData: try to call areaEnter");
-                try {
-                    areaEnter(res.getString("host"),res.getInt("port"),reqMsg);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void connectorEnter(String host, int port, JSONObject reqMsg){
-        pomeloClient = new PomeloClient(host,port);
-        pomeloClient.init();
-
-        pomeloClient.request(connectorRoute, reqMsg, new DataCallBack() {
-            @Override
-            public void responseData(JSONObject jsonObject) {
-                pomeloClient.disconnect();
-                //do something...
-            }
-        });
-    }
-
-    private void areaEnter(String host, int port, JSONObject reqMsg){
-        Log.d(TAG, "areaEnter: host="+host+"; port="+port);
-        //if host is 127.0.0.1, it should be replaced as local IP, eg:192.168.1.101
-        pomeloClient = new PomeloClient("192.168.1.101",port);
-        pomeloClient.init();
-
-        Log.d(TAG, "areaEnter: "+reqMsg.toString());
-        pomeloClient.request(areaRoute, reqMsg, new DataCallBack() {
-            @Override
-            public void responseData(JSONObject jsonObject) {
-                pomeloClient.disconnect();
-                Log.d(TAG, "responseData: areaServer deal.");
-                String text= null;
-                try {
-                    text = jsonObject.getString("result");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                TextView tv = (TextView)findViewById(R.id.content);
-                tv.setText(text);
-
-            }
-        });
     }
 
     @Override
