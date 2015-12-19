@@ -2,4 +2,7 @@
     <string name="app_name">VirtualPlanet</string>
     <string name="action_settings">Settings</string>
     <string name="demo_name_basemap">基本地图功能</string>
+    <string name="saveUser">保存用户名密码</string>
+    <string name="autoLogin">自动登录</string>
+    <string name="register"><a href='http://www.baidu.com'>没有账号?马上注册</a></string>
 </resources>
