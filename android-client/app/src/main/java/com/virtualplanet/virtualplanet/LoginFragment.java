@@ -87,19 +87,24 @@ public class LoginFragment extends Fragment{
                 JSONObject result = Message.queryConnector(username,reqMsg);
                 String code = null;
                 String msg = null;
-                try {
-                    code = result.getString("code");
-                    msg = result.getString("message");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (code != null){
-                    if(code.equals(200)){
-                        ContentFragment contentFragment = new ContentFragment();
-                        transaction.replace(R.id.fragment_layout,contentFragment);
-                    }else {
-                        Toast.makeText(getActivity().getApplicationContext(), msg,
-                                Toast.LENGTH_SHORT).show();
+                if (result == null){
+                    Toast.makeText(getActivity().getApplicationContext(), "服务器连接失败",
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    try {
+                        code = result.getString("code");
+                        msg = result.getString("message");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (code != null){
+                        if(code.equals(200)){
+                            ContentFragment contentFragment = new ContentFragment();
+                            transaction.replace(R.id.fragment_layout,contentFragment);
+                        }else {
+                            Toast.makeText(getActivity().getApplicationContext(), msg,
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
