@@ -25,34 +25,70 @@ Handler.prototype.entry = function(msg, session, next) {
     if (sessionService.getByUid(username)) {
         next(null, {
             code: 500,
-            error: true
+            error: true,
+            message: "already sign in"
         });
         return;
     }
 
-    var signinStatus = self.app.rpc.auth.authRemote.signin(username, password);
-    if (signinStatus) {
+    var signinResult = self.app.rpc.auth.authRemote.signin(username, password);
+    if (signinResult) {
         session.bind(username);
         session.on('closed', onUserLeave(null, self.app));
+        next(null, {
+            code: 200,
+            error: false,
+            message: "sign in successfully"
+        });
     } else {
         next(null, {
             code: 500,
-            error: true
+            error: true,
+            message: "username or password incorrect"
+        });
+    }
+
+    console.log("connector.entry ends");
+};
+
+Handler.prototype.signup = function(msg, session, next) {
+    var self = this;
+    var username = msg.username;
+    var password = msg.password;
+    var name = msg.name;
+
+    if (self.app.rpc.auth.authRemote.checkDuplicates(username)) {
+        next(null, {
+            code: 500,
+            error: true,
+            message: "this username already exists"
         });
         return;
     }
 
-    next(null, {
-        code: 200,
-        error: false
-    });
-    console.log("connector.entry ends");
-};
+    if (self.app.rpc.auth.authRemote.signup(username, password, name)) {
+        next(null, {
+            code: 200,
+            error: false,
+            message: "sign up successfully"
+        });
+        return;
+    } else {
+        next(null, {
+            code: 500,
+            error: true,
+            message: "sign up fails"
+        });
+        return;
+    }
+}
 
 Handler.prototype.exit = function(msg, session, next) {
     onUserLeave(this.app, session);
     next(null, {
-        code: 200
+        code: 200,
+        error: false,
+        message: "sign out successfully"
     })
 }
 
