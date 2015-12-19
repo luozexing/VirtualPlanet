@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JSONObject result = Message.queryConnector("uid","name",gateMsg);
+                JSONObject result = Message.queryConnector("name",gateMsg);
             }
 
             contentFragment = new ContentFragment();
