@@ -25,7 +25,7 @@ public class Message {
     private static String TAG = "Message.class";
 
     public static JSONObject queryConnector(String username, final JSONObject reqMsg){
-        final ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+        final JSONObject[] list = new JSONObject[1];
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -41,17 +41,17 @@ public class Message {
                 pomeloClient.disconnect();
                 try {
                     JSONObject result = connectorEnter(res.getString("host"),res.getInt("port"),reqMsg);
-                    list.add(result);
+                    list[0] = result;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-        return list.get(0);
+        return list[0];
     }
 
     public static JSONObject queryArea(String username, final JSONObject reqMsg){
-        final ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+        final JSONObject[] list = new JSONObject[1];
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -69,19 +69,20 @@ public class Message {
                 Log.d(TAG, "responseData: try to call areaEnter");
                 try {
                     JSONObject result = areaEnter(res.getString("host"),res.getInt("port"),reqMsg);
-                    list.add(result);
+
+                    list[0] = result;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-
-        return list.get(0);
+        return list[0];
     }
 
     private static JSONObject connectorEnter(String host, int port, JSONObject reqMsg){
         final ArrayList<JSONObject> list = new ArrayList<JSONObject>();
-        pomeloClient = new PomeloClient(host,port);
+        final JSONObject result;
+        pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
 
         pomeloClient.request(connectorRoute, reqMsg, new DataCallBack() {
