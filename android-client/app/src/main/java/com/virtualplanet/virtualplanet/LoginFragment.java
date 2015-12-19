@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.netease.pomelo.DataCallBack;
+import com.netease.pomelo.PomeloClient;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,30 +86,34 @@ public class LoginFragment extends Fragment{
                     Log.d(TAG, "not save username and password.");
                 }
                 authEditor.commit();
+                final Message message = new Message();
+                message.queryConnector(username,reqMsg, new CallBack() {
+                    @Override
+                    public void execute(JSONObject jsonObject) {
+                        Log.d(TAG, "returned jsonObject is: "+jsonObject.toString());
+                        int code = 0;
+                        String msg = null;
+                        try {
+                            code = jsonObject.getInt("code");
+                            msg = jsonObject.getString("message");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
-                JSONObject result = Message.queryConnector(username,reqMsg);
-                String code = null;
-                String msg = null;
-                if (result == null){
-                    Toast.makeText(getActivity().getApplicationContext(), "服务器连接失败",
-                            Toast.LENGTH_SHORT).show();
-                }else {
-                    try {
-                        code = result.getString("code");
-                        msg = result.getString("message");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (code != null){
-                        if(code.equals(200)){
+                        if(code == 0){
+                            Toast.makeText(getActivity(), "Have no code.",
+                                    Toast.LENGTH_SHORT).show();
+                        }else if(code == 200){
                             ContentFragment contentFragment = new ContentFragment();
                             transaction.replace(R.id.fragment_layout,contentFragment);
-                        }else {
-                            Toast.makeText(getActivity().getApplicationContext(), msg,
+                        }else if (code == 500){
+                            Log.d(TAG, "in callback code:500");
+                            Toast.makeText(getActivity(), msg,
                                     Toast.LENGTH_SHORT).show();
                         }
+
                     }
-                }
+                });
             }
         });
 

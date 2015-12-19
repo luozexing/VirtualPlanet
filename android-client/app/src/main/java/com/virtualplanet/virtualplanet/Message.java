@@ -15,17 +15,16 @@ import java.util.ArrayList;
  */
 public class Message {
 
-    private static String gateRoute = "gate.gateHandler.queryEntry";
-    private static String connectorRoute = "connector.entryHandler.entry";
-    private static String areaRoute = "area.areaHandler.map";
-    private static String gateHost = "192.168.1.101";
-    private static int gatePort = 3222;
+    private String gateRoute = "gate.gateHandler.queryEntry";
+    private String connectorRoute = "connector.entryHandler.entry";
+    private String areaRoute = "area.areaHandler.map";
+    private String gateHost = "192.168.1.101";
+    private int gatePort = 3222;
 
-    public static PomeloClient pomeloClient;
-    private static String TAG = "Message.class";
+    public PomeloClient pomeloClient;
+    private String TAG = "Message.class";
 
-    public static JSONObject queryConnector(String username, final JSONObject reqMsg){
-        final JSONObject[] list = new JSONObject[1];
+    public void queryConnector(String username, final JSONObject reqMsg, final CallBack callBack){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -40,18 +39,29 @@ public class Message {
             public void responseData(JSONObject res) {
                 pomeloClient.disconnect();
                 try {
-                    JSONObject result = connectorEnter(res.getString("host"),res.getInt("port"),reqMsg);
-                    list[0] = result;
+                    Log.d(TAG, "to connectorEnter");
+                    connectorEnter(res.getString("host"),res.getInt("port"),reqMsg, callBack);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-        return list[0];
     }
 
-    public static JSONObject queryArea(String username, final JSONObject reqMsg){
-        final JSONObject[] list = new JSONObject[1];
+    private void connectorEnter(String host, int port, JSONObject reqMsg, final CallBack callBack){
+        pomeloClient = new PomeloClient(gateHost,port);
+        pomeloClient.init();
+        Log.d(TAG, "in connectorEnter");
+        pomeloClient.request(connectorRoute, reqMsg, new DataCallBack() {
+            @Override
+            public void responseData(JSONObject res) {
+                pomeloClient.disconnect();
+                callBack.execute(res);
+            }
+        });
+    }
+
+    public void queryArea(String username, final JSONObject reqMsg, final CallBack callBack){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -68,46 +78,24 @@ public class Message {
                 pomeloClient.disconnect();
                 Log.d(TAG, "responseData: try to call areaEnter");
                 try {
-                    JSONObject result = areaEnter(res.getString("host"),res.getInt("port"),reqMsg);
-
-                    list[0] = result;
+                    areaEnter(res.getString("host"),res.getInt("port"),reqMsg, callBack);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-        return list[0];
     }
 
-    private static JSONObject connectorEnter(String host, int port, JSONObject reqMsg){
-        final JSONObject[] list = new JSONObject[1];
-        final JSONObject result;
+    private void areaEnter(String host, int port, JSONObject reqMsg, final CallBack callBack){
         pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
 
-        pomeloClient.request(connectorRoute, reqMsg, new DataCallBack() {
-            @Override
-            public void responseData(JSONObject jsonObject) {
-                pomeloClient.disconnect();
-                list[0] = jsonObject;
-            }
-        });
-        return list[0];
-    }
-
-    private static JSONObject areaEnter(String host, int port, JSONObject reqMsg){
-        final JSONObject[] list = new JSONObject[1];
-        pomeloClient = new PomeloClient(gateHost,port);
-        pomeloClient.init();
-
-        Log.d(TAG, "areaEnter: "+reqMsg.toString());
         pomeloClient.request(areaRoute, reqMsg, new DataCallBack() {
             @Override
-            public void responseData(JSONObject jsonObject) {
+            public void responseData(JSONObject res) {
                 pomeloClient.disconnect();
-                list[0] = jsonObject;
+                callBack.execute(res);
             }
         });
-        return list[0];
     }
 }
