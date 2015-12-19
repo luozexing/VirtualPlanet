@@ -42,7 +42,10 @@ Handler.prototype.entry = function(msg, session, next) {
         return;
     }
 
-    next(null);
+    next(null, {
+        code: 200,
+        error: false
+    });
     console.log("connector.entry ends");
 };
 
