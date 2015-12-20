@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                JSONObject result = Message.queryConnector("name",gateMsg);
+                //JSONObject result = QueryPomelo.queryConnector("name",gateMsg);
             }
 
             contentFragment = new ContentFragment();
