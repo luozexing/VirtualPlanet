@@ -1,5 +1,7 @@
 package com.virtualplanet.virtualplanet;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.netease.pomelo.DataCallBack;
@@ -8,12 +10,10 @@ import com.netease.pomelo.PomeloClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 /**
  * Created by suyhuai on 2015/12/19.
  */
-public class Message {
+public class QueryPomelo {
 
     private String gateRoute = "gate.gateHandler.queryEntry";
     private String connectorRoute = "connector.entryHandler.entry";
@@ -22,9 +22,9 @@ public class Message {
     private int gatePort = 3222;
 
     public PomeloClient pomeloClient;
-    private String TAG = "Message.class";
+    private String TAG = "QueryPomelo.class";
 
-    public void queryConnector(String username, final JSONObject reqMsg, final CallBack callBack){
+    public void queryConnector(String username, final JSONObject reqMsg, final Handler handler){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -40,7 +40,7 @@ public class Message {
                 pomeloClient.disconnect();
                 try {
                     Log.d(TAG, "to connectorEnter");
-                    connectorEnter(res.getString("host"),res.getInt("port"),reqMsg, callBack);
+                    connectorEnter(res.getString("host"),res.getInt("port"),reqMsg, handler);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -48,7 +48,7 @@ public class Message {
         });
     }
 
-    private void connectorEnter(String host, int port, JSONObject reqMsg, final CallBack callBack){
+    private void connectorEnter(String host, int port, JSONObject reqMsg, final Handler handler){
         pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
         Log.d(TAG, "in connectorEnter");
@@ -56,12 +56,14 @@ public class Message {
             @Override
             public void responseData(JSONObject res) {
                 pomeloClient.disconnect();
-                callBack.execute(res);
+                Message message = Message.obtain();
+                message.obj = res;
+                handler.sendMessage(message);
             }
         });
     }
 
-    public void queryArea(String username, final JSONObject reqMsg, final CallBack callBack){
+    public void queryArea(String username, final JSONObject reqMsg, final Handler handler){
         pomeloClient = new PomeloClient(gateHost,gatePort);
         pomeloClient.init();
 
@@ -78,7 +80,7 @@ public class Message {
                 pomeloClient.disconnect();
                 Log.d(TAG, "responseData: try to call areaEnter");
                 try {
-                    areaEnter(res.getString("host"),res.getInt("port"),reqMsg, callBack);
+                    areaEnter(res.getString("host"),res.getInt("port"),reqMsg, handler);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -86,7 +88,7 @@ public class Message {
         });
     }
 
-    private void areaEnter(String host, int port, JSONObject reqMsg, final CallBack callBack){
+    private void areaEnter(String host, int port, JSONObject reqMsg, final Handler handler){
         pomeloClient = new PomeloClient(gateHost,port);
         pomeloClient.init();
 
@@ -94,7 +96,9 @@ public class Message {
             @Override
             public void responseData(JSONObject res) {
                 pomeloClient.disconnect();
-                callBack.execute(res);
+                Message message = Message.obtain();
+                message.obj = res;
+                handler.sendMessage(message);
             }
         });
     }
