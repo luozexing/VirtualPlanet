@@ -56,30 +56,30 @@ Handler.prototype.signup = function(msg, session, next) {
     var password = msg.password;
     var name = msg.name;
 
-    if (self.app.rpc.auth.authRemote.checkDuplicates(session, username)) {
+    self.app.rpc.auth.authRemote.checkDuplicates(session, username, function(){
         next(null, {
             code: 500,
             error: true,
             message: "this username already exists"
         });
         return;
-    }
+    });
 
-    if (self.app.rpc.auth.authRemote.signup(session, username, password, name)) {
+    self.app.rpc.auth.authRemote.signup(session, username, password, name, function(){
         next(null, {
             code: 200,
             error: false,
             message: "sign up successfully"
         });
         return;
-    } else {
+    }, function(){
         next(null, {
             code: 500,
             error: true,
             message: "sign up fails"
         });
         return;
-    }
+    });
 }
 
 Handler.prototype.exit = function(msg, session, next) {
