@@ -3,6 +3,7 @@ package com.virtualplanet.virtualplanet;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -23,40 +24,14 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Created by suyhuai on 2015/12/18.
  */
 public class LoginFragment extends Fragment{
     private String TAG = this.getClass().getSimpleName();
     SharedPreferences auth;
-    FragmentManager fm;
-    FragmentTransaction transaction;
-
-    final Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            JSONObject jsonObject = (JSONObject) msg.obj;
-            Log.d(TAG, "returned jsonObject is: "+jsonObject.toString());
-            int code = 0;
-            String info = null;
-            try {
-                code = jsonObject.getInt("code");
-                info = jsonObject.getString("message");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            if(code == 0){
-            }else if(code == 200){
-                Log.d(TAG, "in callback code:200");
-                ContentFragment contentFragment = new ContentFragment();
-                transaction.replace(R.id.fragment_layout,contentFragment);
-                transaction.commit();
-            }else if (code == 500){
-                Toast.makeText(getActivity().getApplicationContext(),info,Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,17 +47,20 @@ public class LoginFragment extends Fragment{
         final CheckBox save = (CheckBox) view.findViewById(R.id.saveUser);
         final Button register = (Button) view.findViewById(R.id.btnRegister);
         final CheckBox auto = (CheckBox) view.findViewById(R.id.autoLogin);
-        fm = getFragmentManager();
-        transaction = fm.beginTransaction();
 
         Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, null);
-        accountImg.setBounds(0, 0, 80, 80);
+        if (accountImg != null) {
+            accountImg.setBounds(0, 0, 80, 80);
+        }
         userNameText.setCompoundDrawables(accountImg, null, null, null);
 
         Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, null);
-        passwordImg.setBounds(0, 0, 80, 70);
+        if (passwordImg != null) {
+            passwordImg.setBounds(0, 0, 80, 70);
+        }
         passwdText.setCompoundDrawables(passwordImg, null, null, null);
 
+        final MyHandler myHandler = new MyHandler(this);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,9 +87,11 @@ public class LoginFragment extends Fragment{
 
                     Log.d(TAG, "not save username and password.");
                 }
-                authEditor.commit();
-                final QueryPomelo queryPomelo = new QueryPomelo();
-                queryPomelo.queryConnector(username,reqMsg, handler);
+                authEditor.apply();
+
+                QueryPomelo queryPomelo = new QueryPomelo();
+
+                queryPomelo.queryConnector(username,reqMsg, myHandler);
             }
         });
 
@@ -142,7 +122,7 @@ public class LoginFragment extends Fragment{
                     log.setText("not autoLogin");
                     Log.d(TAG, "not autoLogin");
                 }
-                authEditor.commit();
+                authEditor.apply();
             }
         });
 
@@ -159,10 +139,42 @@ public class LoginFragment extends Fragment{
                     log.setText("not saveUser");
                     Log.d(TAG, "not saveUser");
                 }
-                authEditor.commit();
+                authEditor.apply();
             }
         });
         return view;
+    }
+
+    static class MyHandler extends Handler {
+        private WeakReference<LoginFragment> mLoginFragmWR;
+
+        MyHandler(LoginFragment theLoginFragment) {
+            mLoginFragmWR = new WeakReference<LoginFragment>(theLoginFragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            LoginFragment mLoginFragment = mLoginFragmWR.get();
+            JSONObject jsonObject = (JSONObject) msg.obj;
+            int code = 0;
+            String info = null;
+            try {
+                code = jsonObject.getInt("code");
+                info = jsonObject.getString("message");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if(code == 0){
+            }else if(code == 200){
+                ContentFragment contentFragment = new ContentFragment();
+                FragmentTransaction transaction = mLoginFragment.getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_layout,contentFragment);
+                transaction.commit();
+            }else if (code == 500){
+                Toast.makeText(mLoginFragment.getActivity().getApplicationContext(),info,Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
