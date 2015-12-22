@@ -48,13 +48,13 @@ public class LoginFragment extends Fragment{
         final Button register = (Button) view.findViewById(R.id.btnRegister);
         final CheckBox auto = (CheckBox) view.findViewById(R.id.autoLogin);
 
-        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, null);
+        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, getActivity().getTheme());
         if (accountImg != null) {
             accountImg.setBounds(0, 0, 80, 80);
         }
         userNameText.setCompoundDrawables(accountImg, null, null, null);
 
-        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, null);
+        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, getActivity().getTheme());
         if (passwordImg != null) {
             passwordImg.setBounds(0, 0, 80, 70);
         }
@@ -64,13 +64,11 @@ public class LoginFragment extends Fragment{
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                view.setBackgroundColor(Color.parseColor("#042178"));
                 String username = userNameText.getText().toString();
                 String passwd = passwdText.getText().toString();
                 JSONObject reqMsg = new JSONObject();
                 try {
-                    reqMsg.put(username,passwd);
+                    reqMsg.put("passwd",passwd).put("username",username);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -91,7 +89,7 @@ public class LoginFragment extends Fragment{
 
                 QueryPomelo queryPomelo = new QueryPomelo();
 
-                queryPomelo.queryConnector(username,reqMsg, myHandler);
+                queryPomelo.queryConnector(username,reqMsg, myHandler, "connector.entryHandler.entry");
             }
         });
 
@@ -99,11 +97,9 @@ public class LoginFragment extends Fragment{
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //调用fragment
-                view.setBackgroundColor(Color.parseColor("#042178"));
+                RegisterFragment registerFragment = new RegisterFragment();
+                getFragmentManager().beginTransaction().replace(R.id.fragment_layout,registerFragment).commit();
 
-                log.setText("register button is clicked");
-                Log.d(TAG, "register button is clicked");
             }
         });
 
@@ -166,6 +162,7 @@ public class LoginFragment extends Fragment{
             }
 
             if(code == 0){
+                Toast.makeText(mLoginFragment.getActivity().getApplicationContext(),"服务器未响应",Toast.LENGTH_SHORT).show();
             }else if(code == 200){
                 ContentFragment contentFragment = new ContentFragment();
                 FragmentTransaction transaction = mLoginFragment.getFragmentManager().beginTransaction();
