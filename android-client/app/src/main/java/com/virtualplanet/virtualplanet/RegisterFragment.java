@@ -51,12 +51,13 @@ public class RegisterFragment extends Fragment{
             public void onClick(View view) {
 
                 String username = userNameText.getText().toString();
-                String passwd = passwdText.getText().toString();
+                String password = passwdText.getText().toString();
+                String gamename = name.getText().toString();
                 JSONObject reqMsg = new JSONObject();
                 try {
                     reqMsg.put("username",username);
-                    reqMsg.put("passwd",passwd);
-                    reqMsg.put("name",name);
+                    reqMsg.put("password",password);
+                    reqMsg.put("gamename",gamename);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -64,7 +65,7 @@ public class RegisterFragment extends Fragment{
 
                 QueryPomelo queryPomelo = new QueryPomelo();
 
-                queryPomelo.queryConnector(username,reqMsg, myHandler,"connector.entryHandler.signup");
+                queryPomelo.queryConnector(username,reqMsg, myHandler,"auth.authHandler.signup");
             }
         });
 

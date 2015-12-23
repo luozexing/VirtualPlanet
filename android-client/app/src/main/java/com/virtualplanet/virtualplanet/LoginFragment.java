@@ -65,10 +65,10 @@ public class LoginFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 String username = userNameText.getText().toString();
-                String passwd = passwdText.getText().toString();
+                String password = passwdText.getText().toString();
                 JSONObject reqMsg = new JSONObject();
                 try {
-                    reqMsg.put("passwd",passwd).put("username",username);
+                    reqMsg.put("password",password).put("username",username);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -77,11 +77,11 @@ public class LoginFragment extends Fragment{
                 SharedPreferences.Editor authEditor = auth.edit();
                 if(save.isChecked()){
                     authEditor.putString("userName",username);
-                    authEditor.putString("passwd",passwd);
+                    authEditor.putString("password",password);
                     Log.d(TAG, "save username and password");
                 }else {
                     authEditor.putString("userName",null);
-                    authEditor.putString("passwd",null);
+                    authEditor.putString("password",null);
 
                     Log.d(TAG, "not save username and password.");
                 }
@@ -89,7 +89,7 @@ public class LoginFragment extends Fragment{
 
                 QueryPomelo queryPomelo = new QueryPomelo();
 
-                queryPomelo.queryConnector(username,reqMsg, myHandler, "connector.entryHandler.entry");
+                queryPomelo.queryConnector(username,reqMsg, myHandler, "auth.authHandler.signin");
             }
         });
 
@@ -145,7 +145,7 @@ public class LoginFragment extends Fragment{
         private WeakReference<LoginFragment> mLoginFragmWR;
 
         MyHandler(LoginFragment theLoginFragment) {
-            mLoginFragmWR = new WeakReference<LoginFragment>(theLoginFragment);
+            mLoginFragmWR = new WeakReference<>(theLoginFragment);
         }
 
         @Override
