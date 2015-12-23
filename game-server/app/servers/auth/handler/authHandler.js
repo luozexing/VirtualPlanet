@@ -30,13 +30,13 @@ var UserModel = db.model("User", userSchema);
 //interfaces
 authHandler.signin = function(msg, session, next) {
     console.log("auth handler sign in begins");
+    var self = this;
     var username = msg.username;
     var password = msg.password;
-    var sessionService = self.app.get("sessionService");
 
     //already sign in
-    if (sessionService.getByUid(username)) {
-        session.unbind(username);
+    if (session.uid) {
+        session.unbind(session.uid);
     }
 
     //sign in
@@ -48,7 +48,7 @@ authHandler.signin = function(msg, session, next) {
             user.update();
 
             session.bind(username);
-            session.on('closed', onUserLeave(self.app, session));
+            //session.on('closed', onUserLeave.bind(null, self.app));
 
             next(null, {
                 code: 200,
