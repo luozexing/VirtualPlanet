@@ -26,9 +26,6 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Created by suyhuai on 2015/12/18.
- */
 public class LoginFragment extends Fragment{
     private String TAG = this.getClass().getSimpleName();
     SharedPreferences auth;
@@ -48,13 +45,13 @@ public class LoginFragment extends Fragment{
         final Button register = (Button) view.findViewById(R.id.btnRegister);
         final CheckBox auto = (CheckBox) view.findViewById(R.id.autoLogin);
 
-        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, getActivity().getTheme());
+        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, null);
         if (accountImg != null) {
             accountImg.setBounds(0, 0, 80, 80);
         }
         userNameText.setCompoundDrawables(accountImg, null, null, null);
 
-        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, getActivity().getTheme());
+        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, null);
         if (passwordImg != null) {
             passwordImg.setBounds(0, 0, 80, 70);
         }
@@ -76,11 +73,11 @@ public class LoginFragment extends Fragment{
 
                 SharedPreferences.Editor authEditor = auth.edit();
                 if(save.isChecked()){
-                    authEditor.putString("userName",username);
+                    authEditor.putString("username",username);
                     authEditor.putString("password",password);
                     Log.d(TAG, "save username and password");
                 }else {
-                    authEditor.putString("userName",null);
+                    authEditor.putString("username",null);
                     authEditor.putString("password",null);
 
                     Log.d(TAG, "not save username and password.");

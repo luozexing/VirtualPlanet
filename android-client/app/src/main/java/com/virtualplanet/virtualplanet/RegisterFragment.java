@@ -32,14 +32,14 @@ public class RegisterFragment extends Fragment{
         final Button register = (Button) view.findViewById(R.id.btnRegister);
         final Button back = (Button) view.findViewById(R.id.btnBack);
 
-        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, getActivity().getTheme());
+        Drawable accountImg = getResources().getDrawable(R.mipmap.login_icon_account, null);
         if (accountImg != null) {
             accountImg.setBounds(0, 0, 80, 80);
         }
         userNameText.setCompoundDrawables(accountImg, null, null, null);
         name.setCompoundDrawables(accountImg, null, null, null);
 
-        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, getActivity().getTheme());
+        Drawable passwordImg = getResources().getDrawable(R.mipmap.login_icon_password, null);
         if (passwordImg != null) {
             passwordImg.setBounds(0, 0, 80, 70);
         }
