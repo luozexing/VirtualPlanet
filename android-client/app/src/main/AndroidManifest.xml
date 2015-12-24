@@ -39,11 +39,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service
+        <!--<service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" >
-        </service>
+        </service>-->
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

@@ -5,11 +5,8 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.baidu.mapapi.SDKInitializer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,12 +16,10 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
 
     private LoginFragment loginFragment;
-    private ContentFragment contentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getFragmentManager();
@@ -33,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         Boolean autoLogin = auth.getBoolean("autoLogin",false);
         if(autoLogin){
             String username = auth.getString("username",null);
-            String passwd = auth.getString("passwd",null);
+            String passwd = auth.getString("password",null);
             if(username != null && passwd != null){
                 JSONObject gateMsg = new JSONObject();
                 try {
@@ -44,9 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 //JSONObject result = QueryPomelo.queryConnector("name",gateMsg);
             }
 
-            contentFragment = new ContentFragment();
-            transaction.replace(R.id.fragment_layout, contentFragment);
-            transaction.commit();
+            ContentFragment contentFragment = new ContentFragment();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_layout, contentFragment).commit();
         }else{
             loginFragment = new LoginFragment();
             transaction.replace(R.id.fragment_layout, loginFragment);

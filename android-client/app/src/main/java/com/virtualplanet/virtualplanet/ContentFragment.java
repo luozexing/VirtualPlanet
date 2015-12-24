@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.TextureMapView;
 
-/**
- * Created by suyhuai on 2015/12/18.
- */
-
 public class ContentFragment extends Fragment {
 
     private String TAG = this.getClass().getSimpleName();
@@ -21,6 +17,7 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        SDKInitializer.initialize(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.content_main, container, false);
         TextureMapView mMapView = (TextureMapView) view.findViewById(R.id.bmapView);
 

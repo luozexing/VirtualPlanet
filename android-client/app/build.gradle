@@ -31,6 +31,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile files('libs/pomelo-android-client.jar')
-    compile files('libs/BaiduLBS_Android.jar')
     compile files('libs/locSDK_6.13.jar')
+    compile files('libs/BaiduLBS_Android.jar')
 }

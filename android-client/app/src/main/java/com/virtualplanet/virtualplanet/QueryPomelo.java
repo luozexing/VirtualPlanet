@@ -11,7 +11,7 @@ import org.json.JSONObject;
 public class QueryPomelo {
 
     private String gateRoute = "gate.gateHandler.queryEntry";
-    private String gateHost = "192.168.1.101";
+    private String gateHost = "45.33.32.123";
     private int gatePort = 3222;
 
     public PomeloClient pomeloClient;
@@ -42,7 +42,7 @@ public class QueryPomelo {
     }
 
     private void connectorEnter(String host, int port, JSONObject reqMsg, final Handler handler,final String route){
-        pomeloClient = new PomeloClient(gateHost,port);
+        pomeloClient = new PomeloClient(host,port);
         pomeloClient.init();
         Log.d(TAG, "in connectorEnter");
         pomeloClient.request(route, reqMsg, new DataCallBack() {
